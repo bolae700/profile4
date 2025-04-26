@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACKER PLAYER PRO</title>
+    <style>
+        :root {
+            --hacker-green: #00ff00;
+            --bg: #000;
+        }
+
+        body {
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'VT323', monospace;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* النجوم الخضراء */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--hacker-green);
+            animation: twinkle 1.5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Scan Lines Overlay */
+        .scan-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 0, 0.05) 0px,
+                rgba(0, 255, 0, 0.05) 1px,
+                transparent 2px,
+                transparent 4px
+            );
+            pointer-events: none;
+            z-index: 3;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* الواجهة الرئيسية */
+        .console {
+            width: 90%;
+            max-width: 340px;
+            background: var(--bg);
+            border: 2px solid var(--hacker-green);
+            position: relative;
+            z-index: 2;
+            margin: 20px;
+        }
+
+        .display {
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* تأثير Glitch على الصورة */
+        .art-frame {
+            border: 1px solid var(--hacker-green);
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            background: #001a00;
+        }
+
+        .album-art {
+            width: 100%;
+            height: 150px;
+            filter: grayscale(100%) sepia(100%) contrast(120%) brightness(0.7) hue-rotate(60deg);
+            object-fit: cover;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* عناصر التحكم */
+        .track-info {
+            color: var(--hacker-green);
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+
+        .track-title {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px var(--hacker-green);
+        }
+
+        .artist {
+            color: #00cc00;
+            font-size: 1em;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid #003300;
+        }
+
+        .ctrl-btn {
+            background: #001a00;
+            border: 1px solid var(--hacker-green);
+            color: var(--hacker-green);
+            padding: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: 0.2s;
+        }
+
+        .ctrl-btn:hover {
+            background: var(--hacker-green);
+            color: #000;
+        }
+
+        /* قائمة التشغيل */
+        .playlist {
+            max-height: 180px;
+            overflow-y: auto;
+            border-top: 1px solid #003300;
+        }
+
+        .playlist::-webkit-scrollbar {
+            width: 8px;
+            background: #001100;
+        }
+
+        .playlist::-webkit-scrollbar-thumb {
+            background: var(--hacker-green);
+        }
+
+        .playlist-item {
+            padding: 10px;
+            color: var(--hacker-green);
+            border-bottom: 1px solid #002200;
+            cursor: pointer;
+            font-size: 1em;
+            transition: 0.2s;
+        }
+
+        .playlist-item.playing {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .playlist-item:hover {
+            background: #001a00;
+        }
+
+        /* شريط التقدم */
+        .progress {
+            height: 3px;
+            background: #002200;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--hacker-green);
+        }
+
+        /* الوقت والصوت */
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            color: var(--hacker-green);
+            font-size: 0.85em;
+            margin: 8px 0;
+        }
+
+        .volume-control {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--hacker-green);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #002200;
+            outline: none;
+            border-radius: 4px;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: var(--hacker-green);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        /* التجاوب */
+        @media (max-width: 480px) {
+            .console {
+                width: 95%;
+                margin: 10px;
+            }
+            
+            .album-art {
+                height: 120px;
+            }
+            
+            .track-title {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="scan-overlay"></div>
+    
+    <!-- النجوم -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const starsContainer = document.createElement('div');
+            starsContainer.className = 'stars';
+            
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 1.5}s`;
+                starsContainer.appendChild(star);
+            }
+            
+            document.body.prepend(starsContainer);
+        });
+    </script>
+
+    <div class="console">
+        <div class="display">
+            <div class="art-frame">
+                <img src="https://www.timeoutriyadh.com/cloud/timeoutriyadh/2022/06/08/tamer-hosny-jeddah-season.jpg" class="album-art">
+            </div>
+            
+            <div class="track-info">
+                <div class="track-title">SYSTEM_ACTIVE</div>
+                <div class="artist">Tamer Hosny</div>
+            </div>
+
+            <div class="time-display">
+                <span id="current-time">00:00</span>
+                <span id="duration">00:00</span>
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
+
+            <div class="volume-control">
+                <span>VOL:</span>
+                <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="ctrl-btn">⏮</button>
+            <button class="ctrl-btn" id="play-btn">▶</button>
+            <button class="ctrl-btn">⏭</button>
+        </div>
+
+        <div class="playlist">
+            <div class="playlist-item">1. Ana Masry</div>
+            <div class="playlist-item">2. Kol Yom A7ebo Tani</div>
+            <div class="playlist-item">3. Elly Gai A7la</div>
+            <div class="playlist-item">4. Saaedny Ansak</div>
+            <div class="playlist-item">5. Erfet Teghayar Men Nafsaha</div>
+        </div>
+    </div>
+
+    <script>
+        class EnhancedHackerPlayer {
+            constructor() {
+                this.audio = new Audio();
+                this.tracks = [
+                    {
+                        title: "Ana Masry",
+                        artist: "Tamer Hosny",
+                        url: "https://serv100.albumaty.com/dl/th/tamer-hosny/albums/elly-gai-ahla/14.Ana_Masry.mp3",
+                        art: "https://www.timeoutriyadh.com/cloud/timeoutriyadh/2022/06/08/tamer-hosny-jeddah-season.jpg"
+                    },
+                    {
+                        title: "Kol Yom A7ebo Tani",
+                        artist: "Tamer Hosny",
+                        url: "https://serv100.albumaty.com/dl/th/tamer-hosny/albums/elly-gai-ahla/12.Kol_Yom_Ahebo_Tani.mp3",
+                        art: "https://www.timeoutriyadh.com/cloud/timeoutriyadh/2022/06/08/tamer-hosny-jeddah-season.jpg"
+                    },
+                    {
+                        title: "Elly Gai A7la",
+                        artist: "Tamer Hosny",
+                        url: "https://serv100.albumaty.com/dl/th/tamer-hosny/albums/elly-gai-ahla/01.Elly_Gai_Ahla.mp3",
+                        art: "https://www.timeoutriyadh.com/cloud/timeoutriyadh/2022/06/08/tamer-hosny-jeddah-season.jpg"
+                    },
+                    {
+                        title: "Saaedny Ansak",
+                        artist: "Tamer Hosny",
+                        url: "https://serv100.albumaty.com/dl/th/tamer-hosny/albums/elly-gai-ahla/11.Saaedny_Ansak.mp3",
+                        art: "https://www.timeoutriyadh.com/cloud/timeoutriyadh/2022/06/08/tamer-hosny-jeddah-season.jpg"
+                    },
+                    {
+                        title: "Erfet Teghayar Men Nafsaha",
+                        artist: "Tamer Hosny",
+                        url: "https://serv100.albumaty.com/dl/th/tamer-hosny/albums/elly-gai-ahla/02.Erfet_Teghayar_Men_Nafsaha.mp3",
+                        art: "https://www.timeoutriyadh.com/cloud/timeoutriyadh/2022/06/08/tamer-hosny-jeddah-season.jpg"
+                    }
+                ];
+                this.currentTrack = 0;
+                this.isPlaying = false;
+                this.initVolumeControl();
+                this.initPlaylist();
+            }
+
+            initVolumeControl() {
+                const volumeSlider = document.querySelector('.volume-slider');
+                volumeSlider.addEventListener('input', (e) => {
+                    this.audio.volume = e.target.value;
+                });
+            }
+
+            initPlaylist() {
+                document.querySelectorAll('.playlist-item').forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        this.loadTrack(index);
+                        if(this.isPlaying) this.togglePlay();
+                    });
+                });
+            }
+
+            formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            loadTrack(index) {
+                this.currentTrack = index;
+                this.audio.src = this.tracks[index].url;
+                this.audio.addEventListener('loadedmetadata', () => {
+                    document.getElementById('duration').textContent = this.formatTime(this.audio.duration);
+                });
+                this.updateUI();
+                this.updatePlaylistHighlight();
+            }
+
+            updateUI() {
+                document.querySelector('.track-title').textContent = 
+                    this.tracks[this.currentTrack].title.toUpperCase();
+                document.querySelector('.artist').textContent = 
+                    this.tracks[this.currentTrack].artist;
+            }
+
+            updatePlaylistHighlight() {
+                document.querySelectorAll('.playlist-item').forEach((item, index) => {
+                    item.classList.toggle('playing', index === this.currentTrack);
+                });
+            }
+
+            togglePlay() {
+                this.isPlaying = !this.isPlaying;
+                const playBtn = document.getElementById('play-btn');
+                playBtn.textContent = this.isPlaying ? '⏸' : '▶';
+                this.isPlaying ? this.audio.play() : this.audio.pause();
+                this.updateProgress();
+            }
+
+            updateProgress() {
+                this.audio.addEventListener('timeupdate', () => {
+                    const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                    document.querySelector('.progress-bar').style.width = `${progress}%`;
+                    document.getElementById('current-time').textContent = 
+                        this.formatTime(this.audio.currentTime);
+                });
+            }
+
+            nextTrack() {
+                this.currentTrack = (this.currentTrack + 1) % this.tracks.length;
+                this.loadTrack(this.currentTrack);
+                if(this.isPlaying) this.audio.play();
+            }
+
+            prevTrack() {
+                this.currentTrack = (this.currentTrack - 1 + this.tracks.length) % this.tracks.length;
+                this.loadTrack(this.currentTrack);
+                if(this.isPlaying) this.audio.play();
+            }
+        }
+
+        const player = new EnhancedHackerPlayer();
+        player.loadTrack(0);
+
+        document.querySelectorAll('.ctrl-btn').forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                switch(index) {
+                    case 0: player.prevTrack(); break;
+                    case 1: player.togglePlay(); break;
+                    case 2: player.nextTrack(); break;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
